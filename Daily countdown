@@ -7,8 +7,8 @@
         "category": "",
         "in": [
             {
-                "x": 60,
-                "y": 80,
+                "x": 40,
+                "y": 200,
                 "wires": [
                     {
                         "id": "a6dd0bf6.3ad69"
@@ -17,78 +17,6 @@
             }
         ],
         "out": []
-    },
-    {
-        "id": "79afc3fb.7f51ec",
-        "type": "debug",
-        "z": "253828eb.6fdfc",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "x": 630,
-        "y": 420,
-        "wires": []
-    },
-    {
-        "id": "1d5c64b1.0a4cfb",
-        "type": "change",
-        "z": "253828eb.6fdfc",
-        "name": "Subtract 1 day",
-        "rules": [
-            {
-                "t": "set",
-                "p": "days_counter",
-                "pt": "msg",
-                "to": "msg.days_counter-1",
-                "tot": "jsonata"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 1080,
-        "y": 120,
-        "wires": [
-            [
-                "b4d7bdd9.5bd19"
-            ]
-        ]
-    },
-    {
-        "id": "b4d7bdd9.5bd19",
-        "type": "switch",
-        "z": "253828eb.6fdfc",
-        "name": "Is this the big day?",
-        "property": "days_counter",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "eq",
-                "v": "0",
-                "vt": "str"
-            },
-            {
-                "t": "else"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 2,
-        "x": 1090,
-        "y": 220,
-        "wires": [
-            [
-                "76298b6c.999504"
-            ],
-            [
-                "15b3bdf3.313ac2"
-            ]
-        ]
     },
     {
         "id": "982653da.7ec9",
@@ -105,11 +33,11 @@
         "randomLast": "5",
         "randomUnits": "seconds",
         "drop": false,
-        "x": 880,
-        "y": 80,
+        "x": 920,
+        "y": 500,
         "wires": [
             [
-                "1d5c64b1.0a4cfb"
+                "fe02d213.531548"
             ]
         ]
     },
@@ -121,9 +49,9 @@
         "rules": [
             {
                 "t": "set",
-                "p": "days_counter",
+                "p": "repetitions",
                 "pt": "msg",
-                "to": "$number(payload)",
+                "to": "$number(payload)+1",
                 "tot": "jsonata"
             }
         ],
@@ -132,11 +60,11 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 230,
-        "y": 80,
+        "x": 210,
+        "y": 200,
         "wires": [
             [
-                "15b3bdf3.313ac2"
+                "fe02d213.531548"
             ]
         ]
     },
@@ -148,17 +76,16 @@
         "server": "97e9c7fb.3748b8",
         "service_domain": "media_player",
         "service": "alexa_tts",
-        "data": "{\"entity_id\":\"alexa_general_announce\"}",
+        "data": "",
         "render_data": true,
         "mergecontext": "",
         "output_location": "notification_sent",
         "output_location_type": "msg",
-        "x": 660,
-        "y": 280,
+        "x": 1220,
+        "y": 240,
         "wires": [
             [
-                "982653da.7ec9",
-                "79afc3fb.7f51ec"
+                "982653da.7ec9"
             ]
         ]
     },
@@ -166,15 +93,15 @@
         "id": "15b3bdf3.313ac2",
         "type": "template",
         "z": "253828eb.6fdfc",
-        "name": "Set payload.data",
+        "name": "More then 1 day left",
         "field": "payload",
         "fieldType": "msg",
         "format": "handlebars",
         "syntax": "mustache",
-        "template": "{\n    \"data\": {\n        \"message\": \"{{days_counter}} days left till {{notification.daily_notif}}\",\n        \"entity_id\": \"{{notification.entity_id}}\"\n    }\n}",
+        "template": "{\n    \"data\": {\n        \"message\": \"{{_loopController.remaining}} days left till {{notification.daily_notif}}\",\n        \"entity_id\": \"{{notification.entity_id}}\"\n    }\n}",
         "output": "json",
-        "x": 450,
-        "y": 100,
+        "x": 960,
+        "y": 300,
         "wires": [
             [
                 "8ef1c605.af0ff8"
@@ -185,15 +112,15 @@
         "id": "76298b6c.999504",
         "type": "template",
         "z": "253828eb.6fdfc",
-        "name": "Set payload.data",
+        "name": "Today is the day",
         "field": "payload",
         "fieldType": "msg",
         "format": "handlebars",
         "syntax": "mustache",
         "template": "{\n    \"data\": {\n        \"message\": \"{{notification.big_day}}\",\n        \"entity_id\": \"{{notification.entity_id}}\"\n    }\n}",
         "output": "json",
-        "x": 1450,
-        "y": 220,
+        "x": 940,
+        "y": 100,
         "wires": [
             [
                 "8b1bce29.3634b8"
@@ -213,10 +140,84 @@
         "mergecontext": "",
         "output_location": "",
         "output_location_type": "none",
-        "x": 1540,
-        "y": 300,
+        "x": 1220,
+        "y": 100,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "fe02d213.531548",
+        "type": "repeat",
+        "z": "253828eb.6fdfc",
+        "name": "Repeat x number of times",
+        "repetitions": "10",
+        "elseOutput": false,
+        "outputs": 1,
+        "x": 470,
+        "y": 200,
+        "wires": [
+            [
+                "3a79ec6f.e489fc"
+            ]
+        ]
+    },
+    {
+        "id": "3a79ec6f.e489fc",
+        "type": "switch",
+        "z": "253828eb.6fdfc",
+        "name": "Number of days left",
+        "property": "_loopController.remaining",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 3,
+        "x": 730,
+        "y": 200,
+        "wires": [
+            [
+                "76298b6c.999504"
+            ],
+            [
+                "e785d12b.f26a78"
+            ],
+            [
+                "15b3bdf3.313ac2"
+            ]
+        ]
+    },
+    {
+        "id": "e785d12b.f26a78",
+        "type": "template",
+        "z": "253828eb.6fdfc",
+        "name": "Tomorrow",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"data\": {\n        \"message\": \"Tomorrow is {{notification.daily_notif}}\",\n        \"entity_id\": \"{{notification.entity_id}}\"\n    }\n}",
+        "output": "json",
+        "x": 940,
+        "y": 200,
+        "wires": [
+            [
+                "8ef1c605.af0ff8"
+            ]
         ]
     },
     {
@@ -228,13 +229,6 @@
         "hassio": false,
         "rejectUnauthorizedCerts": false,
         "ha_boolean": "y|yes|true|on|home|open"
-    },
-    {
-        "id": "c8daf6c6.202de",
-        "type": "tab",
-        "label": "Counting days down announcements",
-        "disabled": false,
-        "info": ""
     },
     {
         "id": "147f785d.4ee4a",
@@ -331,7 +325,7 @@
         "odd": false,
         "even": false,
         "x": 130,
-        "y": 100,
+        "y": 140,
         "wires": [
             [
                 "95c438c4.5eefe"
@@ -360,7 +354,7 @@
         "to": "",
         "reg": false,
         "x": 340,
-        "y": 100,
+        "y": 140,
         "wires": [
             [
                 "49eb2516.50337c"
@@ -372,7 +366,7 @@
         "type": "subflow:253828eb.6fdfc",
         "z": "c8daf6c6.202de",
         "x": 600,
-        "y": 100,
+        "y": 140,
         "wires": []
     },
     {
@@ -394,8 +388,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 340,
-        "y": 220,
+        "x": 1080,
+        "y": 140,
         "wires": [
             [
                 "defdf2ea.7a98"
@@ -496,8 +490,8 @@
         "atstart": false,
         "odd": false,
         "even": false,
-        "x": 130,
-        "y": 220,
+        "x": 870,
+        "y": 140,
         "wires": [
             [
                 "6a90d4fb.685f9c"
@@ -510,8 +504,8 @@
         "id": "defdf2ea.7a98",
         "type": "subflow:253828eb.6fdfc",
         "z": "c8daf6c6.202de",
-        "x": 600,
-        "y": 220,
+        "x": 1340,
+        "y": 140,
         "wires": []
     },
     {
@@ -534,7 +528,7 @@
         "to": "",
         "reg": false,
         "x": 360,
-        "y": 340,
+        "y": 60,
         "wires": [
             [
                 "f539960b.6f6d98"
@@ -636,7 +630,7 @@
         "odd": false,
         "even": false,
         "x": 150,
-        "y": 340,
+        "y": 60,
         "wires": [
             [
                 "55b6eaa0.64f974"
@@ -650,68 +644,264 @@
         "type": "subflow:253828eb.6fdfc",
         "z": "c8daf6c6.202de",
         "x": 640,
-        "y": 340,
+        "y": 60,
         "wires": []
     },
     {
-        "id": "78701271.e3e0ac",
-        "type": "inject",
+        "id": "d74e614b.941ab",
+        "type": "bigtimer",
         "z": "c8daf6c6.202de",
-        "name": "One day",
-        "topic": "",
-        "payload": "1",
-        "payloadType": "num",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "x": 120,
-        "y": 420,
+        "outtopic": "",
+        "outpayload1": "10",
+        "outpayload2": "",
+        "name": "Christmas",
+        "comment": "",
+        "lat": "0",
+        "lon": "0",
+        "starttime": "540",
+        "endtime": "540",
+        "starttime2": 0,
+        "endtime2": 0,
+        "startoff": 0,
+        "endoff": 0,
+        "offs": 0,
+        "outtext1": "",
+        "outtext2": "OFF",
+        "timeout": "1440",
+        "sun": false,
+        "mon": false,
+        "tue": false,
+        "wed": false,
+        "thu": false,
+        "fri": false,
+        "sat": false,
+        "jan": false,
+        "feb": false,
+        "mar": false,
+        "apr": false,
+        "may": false,
+        "jun": false,
+        "jul": false,
+        "aug": false,
+        "sep": false,
+        "oct": false,
+        "nov": false,
+        "dec": false,
+        "day1": "15",
+        "month1": "12",
+        "day2": 0,
+        "month2": 0,
+        "day3": 0,
+        "month3": 0,
+        "day4": 0,
+        "month4": 0,
+        "day5": 0,
+        "month5": 0,
+        "day6": 0,
+        "month6": 0,
+        "d1": 0,
+        "w1": 0,
+        "d2": 0,
+        "w2": 0,
+        "d3": 0,
+        "w3": 0,
+        "d4": 0,
+        "w4": 0,
+        "d5": 0,
+        "w5": 0,
+        "d6": 0,
+        "w6": 0,
+        "xday1": 0,
+        "xmonth1": 0,
+        "xday2": 0,
+        "xmonth2": 0,
+        "xday3": 0,
+        "xmonth3": 0,
+        "xday4": 0,
+        "xmonth4": 0,
+        "xday5": 0,
+        "xmonth5": 0,
+        "xday6": 0,
+        "xmonth6": 0,
+        "xd1": 0,
+        "xw1": 0,
+        "xd2": 0,
+        "xw2": 0,
+        "xd3": 0,
+        "xw3": 0,
+        "xd4": 0,
+        "xw4": 0,
+        "xd5": 0,
+        "xw5": 0,
+        "xd6": 0,
+        "xw6": 0,
+        "suspend": false,
+        "random": false,
+        "repeat": false,
+        "atstart": false,
+        "odd": false,
+        "even": false,
+        "x": 130,
+        "y": 240,
         "wires": [
             [
-                "b5760a3b.d24bf8"
-            ]
+                "a028b891.e68ba8"
+            ],
+            [],
+            []
         ]
     },
     {
-        "id": "a3814a13.6729d",
-        "type": "subflow:253828eb.6fdfc",
-        "z": "c8daf6c6.202de",
-        "x": 620,
-        "y": 600,
-        "wires": []
-    },
-    {
-        "id": "713d6e34.bf3758",
-        "type": "template",
+        "id": "a028b891.e68ba8",
+        "type": "change",
         "z": "c8daf6c6.202de",
         "name": "Set notification",
-        "field": "notification",
-        "fieldType": "msg",
-        "format": "handlebars",
-        "syntax": "mustache",
-        "template": "{\n    \"daily_notif\": \"{{daily_notif}}\",\n    \"big_day\": \"{{big_day}}\",\n    \"entity_id\": \"{{entity_id}}\"\n}",
-        "output": "json",
+        "rules": [
+            {
+                "t": "set",
+                "p": "notification",
+                "pt": "msg",
+                "to": "{\"daily_notif\":\"Christmas\",\"big_day\":\"Merry Christmas!\",\"entity_id\":\"group.alexa_general_announce\"}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
         "x": 340,
-        "y": 600,
+        "y": 240,
         "wires": [
             [
-                "a3814a13.6729d"
+                "2ff1c944.cd09be"
             ]
         ]
     },
     {
-        "id": "b5760a3b.d24bf8",
+        "id": "2ff1c944.cd09be",
+        "type": "subflow:253828eb.6fdfc",
+        "z": "c8daf6c6.202de",
+        "x": 600,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "8804a27e.867a2",
+        "type": "bigtimer",
+        "z": "c8daf6c6.202de",
+        "outtopic": "",
+        "outpayload1": "1",
+        "outpayload2": "",
+        "name": "New Year",
+        "comment": "",
+        "lat": "0",
+        "lon": "0",
+        "starttime": "0",
+        "endtime": "0",
+        "starttime2": 0,
+        "endtime2": 0,
+        "startoff": 0,
+        "endoff": 0,
+        "offs": 0,
+        "outtext1": "",
+        "outtext2": "OFF",
+        "timeout": "1440",
+        "sun": false,
+        "mon": false,
+        "tue": false,
+        "wed": false,
+        "thu": false,
+        "fri": false,
+        "sat": false,
+        "jan": false,
+        "feb": false,
+        "mar": false,
+        "apr": false,
+        "may": false,
+        "jun": false,
+        "jul": false,
+        "aug": false,
+        "sep": false,
+        "oct": false,
+        "nov": false,
+        "dec": false,
+        "day1": "1",
+        "month1": "31",
+        "day2": 0,
+        "month2": 0,
+        "day3": 0,
+        "month3": 0,
+        "day4": 0,
+        "month4": 0,
+        "day5": 0,
+        "month5": 0,
+        "day6": 0,
+        "month6": 0,
+        "d1": 0,
+        "w1": 0,
+        "d2": 0,
+        "w2": 0,
+        "d3": 0,
+        "w3": 0,
+        "d4": 0,
+        "w4": 0,
+        "d5": 0,
+        "w5": 0,
+        "d6": 0,
+        "w6": 0,
+        "xday1": 0,
+        "xmonth1": 0,
+        "xday2": 0,
+        "xmonth2": 0,
+        "xday3": 0,
+        "xmonth3": 0,
+        "xday4": 0,
+        "xmonth4": 0,
+        "xday5": 0,
+        "xmonth5": 0,
+        "xday6": 0,
+        "xmonth6": 0,
+        "xd1": 0,
+        "xw1": 0,
+        "xd2": 0,
+        "xw2": 0,
+        "xd3": 0,
+        "xw3": 0,
+        "xd4": 0,
+        "xw4": 0,
+        "xd5": 0,
+        "xw5": 0,
+        "xd6": 0,
+        "xw6": 0,
+        "suspend": false,
+        "random": false,
+        "repeat": false,
+        "atstart": false,
+        "odd": false,
+        "even": false,
+        "x": 840,
+        "y": 240,
+        "wires": [
+            [
+                "3f13bb65.197aac"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "3f13bb65.197aac",
         "type": "change",
         "z": "c8daf6c6.202de",
-        "name": "Daily Notification",
+        "name": "Set notification",
         "rules": [
             {
                 "t": "set",
-                "p": "daily_notif",
+                "p": "notification",
                 "pt": "msg",
-                "to": "Manual Test",
-                "tot": "str"
+                "to": "{\"daily_notif\":\"New Year\",\"big_day\":\"Happy New Year!\",\"entity_id\":\"group.alexa_general_announce\"}",
+                "tot": "json"
             }
         ],
         "action": "",
@@ -719,66 +909,20 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 130,
-        "y": 480,
+        "x": 1060,
+        "y": 240,
         "wires": [
             [
-                "611f6478.a32c44"
+                "a753874e.cd378"
             ]
         ]
     },
     {
-        "id": "611f6478.a32c44",
-        "type": "change",
+        "id": "a753874e.cd378",
+        "type": "subflow:253828eb.6fdfc",
         "z": "c8daf6c6.202de",
-        "name": "Final notification",
-        "rules": [
-            {
-                "t": "set",
-                "p": "big_day",
-                "pt": "msg",
-                "to": "BIG DAY",
-                "tot": "str"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 120,
-        "y": 540,
-        "wires": [
-            [
-                "eef490a9.7e77c8"
-            ]
-        ]
-    },
-    {
-        "id": "eef490a9.7e77c8",
-        "type": "change",
-        "z": "c8daf6c6.202de",
-        "name": "Alexa Entity",
-        "rules": [
-            {
-                "t": "set",
-                "p": "entity_id",
-                "pt": "msg",
-                "to": "group.alexa_general_announce",
-                "tot": "str"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 110,
-        "y": 600,
-        "wires": [
-            [
-                "713d6e34.bf3758"
-            ]
-        ]
+        "x": 1320,
+        "y": 240,
+        "wires": []
     }
 ]
